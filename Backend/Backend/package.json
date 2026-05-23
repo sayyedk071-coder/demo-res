@@ -1,0 +1,19 @@
+{
+  "name": "aura-table-restaurant",
+  "version": "1.0.0",
+  "description": "Production-ready backend and frontend for Aura Table restaurant.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node server.js",
+    "check": "node --check server.js"
+  },
+  "dependencies": {
+    "nodemailer": "^6.10.1",
+    "pg": "^8.12.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}
