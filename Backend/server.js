@@ -530,35 +530,6 @@ async function notifyReservation(record) {
 }
 
 async function handleReservation(req, res) {
-  await Promise.allSettled([
-    sendMail({
-      to: NOTIFY_TO,
-      subject: `New reservation ${record.bookingCode}`,
-      text: lines.join("\n")
-    }),
-    sendMail({
-      to: record.email,
-      subject: `Aura Table reservation ${record.bookingCode}`,
-      text: `Thank you ${record.name}. Your Aura Table reservation is confirmed.\n\n${lines.join("\n")}`
-    })
-  ]);
-}
-
-  await Promise.allSettled([
-    sendMail({
-      to: NOTIFY_TO,
-      subject: `New reservation ${record.bookingCode}`,
-      text: lines.join("\n")
-    }),
-    sendMail({
-      to: record.email,
-      subject: `Aura Table reservation ${record.bookingCode}`,
-      text: `Thank you ${record.name}. Your Aura Table reservation is confirmed.\n\n${lines.join("\n")}`
-    })
-  ]);
-}
-
-async function handleReservation(req, res) {
   if (!rateLimit(req, res, "reservation", 12, 10 * 60_000)) return;
 
   const data = await parseBody(req);
