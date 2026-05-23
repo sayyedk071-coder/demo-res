@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aura Table Admin</title>
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:3400 http://127.0.0.1:3400 https:; form-action 'self';">
+  <style>
+    :root {
+      --ink: #1e1712;
+      --muted: #7b6b60;
+      --paper: #fff8ed;
+      --card: #ffffff;
+      --line: rgba(30, 23, 18, 0.12);
+      --gold: #e6b867;
+      --ember: #c86f3d;
+      --green: #2f7b57;
+      --shadow: 0 20px 60px rgba(30, 23, 18, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(135deg, #fff7e8, #f3d0a6);
+      font-family: Manrope, system-ui, sans-serif;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .shell {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 28px 0 60px;
+    }
+
+    .topbar,
+    .card,
+    .login {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 18px;
+    }
+
+    .brand {
+      display: grid;
+      gap: 2px;
+    }
+
+    .brand strong {
+      font-size: 1.05rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .brand span,
+    .muted {
+      color: var(--muted);
+    }
+
+    .btn {
+      min-height: 42px;
+      border: 0;
+      border-radius: 999px;
+      padding: 0 16px;
+      color: #241005;
+      background: linear-gradient(135deg, #f8d98b, var(--gold), var(--ember));
+      font-weight: 800;
+    }
+
+    .btn.secondary {
+      border: 1px solid var(--line);
+      background: var(--card);
+    }
+
+    .login {
+      width: min(430px, calc(100% - 28px));
+      margin: 90px auto;
+      padding: 24px;
+    }
+
+    .login h1 {
+      margin: 0 0 8px;
+      font-size: 2rem;
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      margin-top: 16px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    input,
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 13px;
+      background: #fff;
+      color: var(--ink);
+      outline: none;
+    }
+
+    .status {
+      min-height: 24px;
+      color: var(--ember);
+      font-weight: 800;
+    }
+
+    .dashboard {
+      display: none;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .card {
+      padding: 18px;
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 2rem;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 14px;
+      background: var(--card);
+    }
+
+    th,
+    td {
+      padding: 13px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 0.92rem;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+    }
+
+    .pill {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 6px 10px;
+      color: #fff;
+      background: var(--green);
+      font-size: 0.78rem;
+      font-weight: 900;
+    }
+
+    .table-wrap {
+      overflow: auto;
+    }
+
+    @media (max-width: 760px) {
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .topbar,
+      .toolbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <section class="login" id="loginPanel">
+    <h1>Admin Login</h1>
+    <p class="muted">Manage Aura Table reservations and newsletter subscribers.</p>
+    <form id="loginForm">
+      <label>
+        Username
+        <input name="username" autocomplete="username" required />
+      </label>
+      <label>
+        Password
+        <input name="password" type="password" autocomplete="current-password" required />
+      </label>
+      <p class="status" id="loginStatus" role="status"></p>
+      <button class="btn" type="submit">Login</button>
+    </form>
+  </section>
+
+  <main class="shell dashboard" id="dashboard">
+    <header class="topbar">
+      <div class="brand">
+        <strong>Aura Table Admin</strong>
+        <span>Reservations, subscribers, and table status</span>
+      </div>
+      <button class="btn secondary" id="logoutButton" type="button">Logout</button>
+    </header>
+
+    <section class="stats" id="stats"></section>
+
+    <section class="card">
+      <div class="toolbar">
+        <input id="searchInput" placeholder="Search name, phone, email, code..." />
+        <button class="btn secondary" id="refreshButton" type="button">Refresh</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Guest</th>
+              <th>Date</th>
+              <th>Guests</th>
+              <th>Occasion</th>
+              <th>Status</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody id="reservationRows"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="config.js"></script>
+  <script>
+    const loginPanel = document.querySelector('#loginPanel');
+    const dashboard = document.querySelector('#dashboard');
+    const loginForm = document.querySelector('#loginForm');
+    const loginStatus = document.querySelector('#loginStatus');
+    const rows = document.querySelector('#reservationRows');
+    const stats = document.querySelector('#stats');
+    const searchInput = document.querySelector('#searchInput');
+    const API_BASE = window.AURA_API_BASE || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3400' : '');
+    let reservations = [];
+
+    async function api(url, options = {}) {
+      try {
+        const response = await fetch(`${API_BASE}${url}`, {
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          ...options,
+        });
+        const contentType = response.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) {
+          throw new Error('Backend API is not connected. If this is Vercel, set your deployed backend URL in config.js.');
+        }
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Request failed');
+        return data;
+      } catch (error) {
+        if (error instanceof TypeError) {
+          throw new Error('Backend is not running or API URL is wrong. For Vercel, set window.AURA_API_BASE in config.js.');
+        }
+        throw error;
+      }
+    }
+
+    if (window.location.protocol === 'file:') {
+      loginStatus.textContent = 'Admin must be opened from the backend server: http://localhost:3000/admin.html';
+    }
+
+    function showDashboard() {
+      loginPanel.style.display = 'none';
+      dashboard.style.display = 'block';
+    }
+
+    function renderStats(summary) {
+      stats.innerHTML = [
+        ['Total bookings', summary.totalReservations],
+        ['Today', summary.todayReservations],
+        ['Pending', summary.pendingReservations],
+        ['Subscribers', summary.subscribers],
+      ].map(([label, value]) => `
+        <article class="card stat">
+          <span class="muted">${label}</span>
+          <strong>${value}</strong>
+        </article>
+      `).join('');
+    }
+
+    function renderRows() {
+      const query = searchInput.value.trim().toLowerCase();
+      const filtered = reservations.filter(item => {
+        const haystack = `${item.bookingCode} ${item.name} ${item.email} ${item.phone} ${item.date} ${item.status}`.toLowerCase();
+        return haystack.includes(query);
+      });
+
+      rows.innerHTML = filtered.map(item => `
+        <tr>
+          <td><strong>${item.bookingCode}</strong></td>
+          <td>${item.name}<br><span class="muted">${item.phone}<br>${item.email}</span></td>
+          <td>${item.date}<br><span class="muted">${item.time}</span></td>
+          <td>${item.guests}</td>
+          <td>${item.occasion}</td>
+          <td>
+            <select data-status="${item.id}">
+              ${['Pending', 'Confirmed', 'Cancelled', 'Completed'].map(status => `
+                <option ${status === item.status ? 'selected' : ''}>${status}</option>
+              `).join('')}
+            </select>
+          </td>
+          <td>${item.notes || '<span class="muted">No notes</span>'}</td>
+        </tr>
+      `).join('') || '<tr><td colspan="7">No reservations found.</td></tr>';
+    }
+
+    async function loadDashboard() {
+      const [summary, data] = await Promise.all([
+        api('/api/admin/summary'),
+        api('/api/admin/reservations'),
+      ]);
+      reservations = data.reservations;
+      renderStats(summary);
+      renderRows();
+      showDashboard();
+    }
+
+    loginForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      loginStatus.textContent = 'Checking...';
+      try {
+        await api('/api/admin/login', {
+          method: 'POST',
+          body: JSON.stringify(Object.fromEntries(new FormData(loginForm).entries())),
+        });
+        loginStatus.textContent = '';
+        await loadDashboard();
+      } catch (error) {
+        loginStatus.textContent = error.message;
+      }
+    });
+
+    document.querySelector('#logoutButton').addEventListener('click', async () => {
+      await api('/api/admin/logout', { method: 'POST', body: '{}' });
+      window.location.reload();
+    });
+
+    document.querySelector('#refreshButton').addEventListener('click', loadDashboard);
+    searchInput.addEventListener('input', renderRows);
+
+    rows.addEventListener('change', async (event) => {
+      const select = event.target.closest('[data-status]');
+      if (!select) return;
+      const id = select.dataset.status;
+      const result = await api(`/api/admin/reservations/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status: select.value }),
+      });
+      reservations = reservations.map(item => item.id === id ? result.reservation : item);
+      renderRows();
+      renderStats(await api('/api/admin/summary'));
+    });
+
+    loadDashboard().catch(() => {
+      loginPanel.style.display = 'block';
+      dashboard.style.display = 'none';
+    });
+  </script>
+</body>
+
+</html>
