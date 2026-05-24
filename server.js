@@ -515,22 +515,28 @@ async function sendMail({ to, subject, text: body }) {
 async function notifyReservation(record) {
   const ownerEmail = NOTIFY_TO || SMTP_USER || "";
   const guestEmail = record.email || "";
+  const prettyDate = new Date(`${record.date}T00:00:00`).toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  });
   const bookingSummary = [
     `Booking Code: ${record.bookingCode}`,
-    `Name: ${record.name}`,
+    `Guest Name: ${record.name}`,
     `Email: ${record.email}`,
     `Phone: ${record.phone}`,
-    `Date: ${record.date}`,
+    `Date: ${prettyDate}`,
     `Time: ${record.time}`,
     `Guests: ${record.guests}`,
     `Occasion: ${record.occasion || "Dinner"}`,
     `Special Request: ${record.notes || "None"}`
   ].join("\n");
 
-  const adminSubject = `New Booking: ${record.bookingCode}`;
-  const guestSubject = `Reservation confirmed: ${record.bookingCode}`;
-  const adminBody = `A new reservation was submitted.\n\n${bookingSummary}`;
-  const guestBody = `Thank you for booking at Aura Table.\n\n${bookingSummary}\n\nWe will confirm your table shortly.`;
+  const adminSubject = `New Aura Table Booking: ${record.bookingCode}`;
+  const guestSubject = `Your Aura Table reservation is confirmed`;
+  const adminBody = `Dear Aura Table Team,\n\nA new reservation has been submitted on your website.\n\n${bookingSummary}\n\nPlease review the booking and update its status in the admin dashboard if needed.\n\nBest regards,\nAura Table System`;
+  const guestBody = `Dear ${record.name},\n\nThank you for choosing Aura Table. Your reservation has been confirmed.\n\n${bookingSummary}\n\nWe look forward to welcoming you. If you need to make any changes, please contact us directly.\n\nBest regards,\nAura Table Team`;
 
   console.log("Reservation notifications starting", {
     bookingCode: record.bookingCode,
