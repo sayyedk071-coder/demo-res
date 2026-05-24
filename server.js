@@ -477,7 +477,11 @@ function timingSafeEqualText(a, b) {
 }
 
 async function sendMail({ to, subject, text: body }) {
-  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS || !to) return false;
+  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS || !to) {
+    console.warn("SMTP email not sent: missing SMTP_HOST, SMTP_USER, SMTP_PASS, or recipient address.");
+    return false;
+  }
+
   let nodemailer;
   try {
     nodemailer = require("nodemailer");
@@ -490,21 +494,85 @@ async function sendMail({ to, subject, text: body }) {
     host: SMTP_HOST,
     port: SMTP_PORT,
     secure: SMTP_PORT === 465,
+    requireTLS: SMTP_PORT === 587,
     auth: { user: SMTP_USER, pass: SMTP_PASS }
   });
 
-  await transporter.sendMail({
-    from: NOTIFY_FROM,
-    to,
-    subject,
-    text: body
-  });
-  return true;
+  try {
+    await transporter.sendMail({
+      from: NOTIFY_FROM,
+      to,
+      subject,
+      text: body
+    });
+    return true;
+  } catch (error) {
+    console.error("SMTP email failed:", error?.message || error);
+    throw error;
+  }
 }
 
 async function notifyReservation(record) {
+  const ownerEmail = NOTIFY_TO || SMTP_USER || "";
+  const guestEmail = record.email || "";
+  const bookingSummary = [
+    `Booking Code: ${record.bookingCode}`,
+    `Name: ${record.name}`,
+    `Email: ${record.email}`,
+    `Phone: ${record.phone}`,
+    `Date: ${record.date}`,
+    `Time: ${record.time}`,
+    `Guests: ${record.guests}`,
+    `Occasion: ${record.occasion || "Dinner"}`,
+    `Special Request: ${record.notes || "None"}`
+  ].join("\n");
+
+  const adminSubject = `New Booking: ${record.bookingCode}`;
+  const guestSubject = `Reservation confirmed: ${record.bookingCode}`;
+  const adminBody = `A new reservation was submitted.\n\n${bookingSummary}`;
+  const guestBody = `Thank you for booking at Aura Table.\n\n${bookingSummary}\n\nWe will confirm your table shortly.`;
+
+  console.log("Reservation notifications starting", {
+    bookingCode: record.bookingCode,
+    ownerEmail,
+    guestEmail,
+    smtpConfigured: Boolean(SMTP_HOST && SMTP_USER && SMTP_PASS),
+    notifyFrom: NOTIFY_FROM,
+    smtpPort: SMTP_PORT
+  });
+
+  const smtpTasks = [];
+  if (ownerEmail) {
+    smtpTasks.push(sendMail({ to: ownerEmail, subject: adminSubject, text: adminBody }));
+  }
+  if (guestEmail && guestEmail !== ownerEmail) {
+    smtpTasks.push(sendMail({ to: guestEmail, subject: guestSubject, text: guestBody }));
+  }
+
+  const smtpResults = await Promise.allSettled(smtpTasks);
+  const smtpSent = smtpResults.some(result => result.status === "fulfilled" && result.value);
+
+  if (smtpSent) {
+    console.log("Reservation notifications sent successfully", {
+      bookingCode: record.bookingCode,
+      ownerEmail,
+      guestEmail
+    });
+    return;
+  }
+
+  const failedReasons = smtpResults
+    .filter(result => result.status === "rejected")
+    .map(result => result.reason?.message || String(result.reason || "unknown error"));
+
+  if (failedReasons.length > 0) {
+    console.warn("SMTP notification failed. Falling back to Web3Forms. Reasons:", failedReasons.join(" | "));
+  } else {
+    console.warn("SMTP notification was not sent. Falling back to Web3Forms.");
+  }
+
   try {
-    await fetch('https://api.web3forms.com/submit', {
+    const web3formsResponse = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -512,7 +580,7 @@ async function notifyReservation(record) {
       },
       body: JSON.stringify({
         access_key: "8cedcb5e-2953-4d61-a715-53939e49d45a",
-        subject: "New Booking: " + record.bookingCode,
+        subject: adminSubject,
         from_name: "Aura Table Notifications",
         Name: record.name,
         Email: record.email,
@@ -524,8 +592,12 @@ async function notifyReservation(record) {
         Notes: record.notes || "None"
       })
     });
+    console.log("Web3Forms fallback status", {
+      bookingCode: record.bookingCode,
+      status: web3formsResponse.status
+    });
   } catch (error) {
-    console.log("Web3Forms failed:", error);
+    console.log("Notification fallback failed:", error);
   }
 }
 
@@ -550,7 +622,18 @@ async function handleReservation(req, res) {
     ...reservation
   };
 
+  console.log("Reservation received", {
+    bookingCode: record.bookingCode,
+    email: record.email,
+    phone: record.phone,
+    date: record.date,
+    time: record.time,
+    guests: record.guests,
+    occasion: record.occasion
+  });
+
   const saved = await db.createReservation(record);
+  console.log("Reservation saved", { bookingCode: saved.bookingCode });
   notifyReservation(saved).catch(error => console.warn("Reservation notification failed:", error.message));
   sendJson(res, 201, {
     message: "Reserved successfully",
