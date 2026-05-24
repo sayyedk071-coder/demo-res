@@ -23,8 +23,8 @@ http://localhost:3400/admin.html
 Local admin login:
 
 ```text
-Username: admin
-Password: change-this-password
+Username: auratabel
+Password: auratabel4000
 ```
 
 Do not open `admin.html` directly from the folder or with Live Server, because the admin panel needs the Node backend API.

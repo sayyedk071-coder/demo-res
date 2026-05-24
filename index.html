@@ -1,0 +1,2108 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aura Table | Modern Restaurant & Fine Dining</title>
+  <meta name="description"
+    content="Aurora Table is a modern restaurant website with immersive dining visuals, animated menu sections, and a reservation booking experience." />
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; upgrade-insecure-requests; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; frame-src https://www.google.com; connect-src 'self' http://localhost:3400 http://127.0.0.1:3400 https:; form-action 'self' https://api.web3forms.com;">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(self), payment=()">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --ink: #17110b;
+      --espresso: #2a160d;
+      --cocoa: #5c321f;
+      --ember: #c86f3d;
+      --gold: #e5b867;
+      --cream: #fff4e4;
+      --paper: #fffaf1;
+      --sage: #65775e;
+      --shadow: 0 24px 70px rgba(29, 13, 5, 0.22);
+      --radius-lg: 34px;
+      --radius-md: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Manrope", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 9% 8%, rgba(229, 184, 103, 0.38), transparent 29rem),
+        radial-gradient(circle at 86% 16%, rgba(200, 111, 61, 0.22), transparent 26rem),
+        linear-gradient(135deg, #fff7e8 0%, #f7dcc1 38%, #e9b984 100%);
+      overflow-x: hidden;
+    }
+
+    body.menu-open {
+      overflow: hidden;
+    }
+
+    body.menu-open> :not(.menu-overlay) {
+      filter: blur(12px) saturate(0.82);
+      transform: scale(0.992);
+      transition: filter 260ms ease, transform 260ms ease;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.15;
+      background-image:
+        linear-gradient(30deg, rgba(42, 22, 13, 0.09) 12%, transparent 12.5%, transparent 87%, rgba(42, 22, 13, 0.09) 87.5%, rgba(42, 22, 13, 0.09)),
+        linear-gradient(150deg, rgba(42, 22, 13, 0.09) 12%, transparent 12.5%, transparent 87%, rgba(42, 22, 13, 0.09) 87.5%, rgba(42, 22, 13, 0.09));
+      background-size: 48px 84px;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 34px));
+      margin: 0 auto;
+    }
+
+    .nav {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(1180px, calc(100% - 28px));
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 13px 16px 13px 18px;
+      border: 1px solid rgba(255, 250, 241, 0.34);
+      border-radius: 999px;
+      color: var(--cream);
+      background: rgba(28, 15, 9, 0.72);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 14px 45px rgba(22, 9, 2, 0.22);
+      animation: dropIn 800ms ease both;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      flex: 0 0 auto;
+      gap: 11px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      width: 39px;
+      height: 39px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--espresso);
+      background: linear-gradient(135deg, var(--gold), #fff1bc);
+      box-shadow: inset 0 -5px 13px rgba(100, 48, 18, 0.22);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: rgba(255, 244, 228, 0.84);
+    }
+
+    .nav-links a {
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -6px;
+      width: 0;
+      height: 2px;
+      background: var(--gold);
+      transition: width 240ms ease;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .menu-toggle {
+      display: none;
+      width: 44px;
+      height: 44px;
+      flex: 0 0 auto;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 244, 228, 0.24);
+      border-radius: 50%;
+      background: rgba(255, 244, 228, 0.1);
+      cursor: pointer;
+    }
+
+    .menu-toggle-lines {
+      display: grid;
+      gap: 5px;
+      width: 20px;
+    }
+
+    .menu-toggle-lines span {
+      display: block;
+      height: 2px;
+      border-radius: 999px;
+      background: var(--cream);
+      transition: transform 220ms ease, opacity 220ms ease;
+    }
+
+    .nav.nav-open .menu-toggle-lines span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+
+    .nav.nav-open .menu-toggle-lines span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .nav.nav-open .menu-toggle-lines span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 48px;
+      padding: 0 22px;
+      border: 0;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 800;
+      transition: transform 220ms ease, box-shadow 220ms ease, background 220ms ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+    }
+
+    .btn-primary {
+      color: #241005;
+      background: linear-gradient(135deg, #f8d98b, var(--gold) 45%, #c86f3d);
+      box-shadow: 0 15px 28px rgba(200, 111, 61, 0.28);
+    }
+
+    .btn-dark {
+      color: var(--cream);
+      background: var(--espresso);
+      box-shadow: 0 15px 30px rgba(42, 22, 13, 0.22);
+    }
+
+    .btn-soft {
+      color: var(--cream);
+      border: 1px solid rgba(255, 244, 228, 0.32);
+      background: rgba(255, 244, 228, 0.1);
+    }
+
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: grid;
+      align-items: center;
+      padding: 132px 0 74px;
+      color: var(--cream);
+      background:
+        linear-gradient(90deg, rgba(23, 10, 3, 0.92) 0%, rgba(23, 10, 3, 0.66) 43%, rgba(23, 10, 3, 0.18) 100%),
+        url("assets/images/hero/hero-restaurant.jpg") center/cover;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -10% -18% -10%;
+      height: 210px;
+      background: radial-gradient(ellipse at center, rgba(255, 244, 228, 0.96), transparent 72%);
+      filter: blur(32px);
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(310px, 0.72fr);
+      gap: 50px;
+      align-items: end;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 20px;
+      color: #ffdf9c;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 44px;
+      height: 1px;
+      background: currentColor;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: "Cormorant Garamond", serif;
+      line-height: 0.94;
+      margin: 0;
+    }
+
+    h1 {
+      max-width: 800px;
+      font-size: clamp(4.1rem, 10vw, 9.2rem);
+      letter-spacing: -0.07em;
+      animation: rise 900ms 180ms ease both;
+    }
+
+    h1 span {
+      color: #ffd47d;
+      font-style: italic;
+    }
+
+    .hero p {
+      max-width: 650px;
+      margin: 28px 0 0;
+      color: rgba(255, 244, 228, 0.82);
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      line-height: 1.8;
+      animation: rise 900ms 320ms ease both;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 36px;
+      animation: rise 900ms 460ms ease both;
+    }
+
+    .hero-card {
+      padding: 20px;
+      border: 1px solid rgba(255, 244, 228, 0.24);
+      border-radius: var(--radius-lg);
+      background: rgba(32, 16, 8, 0.56);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+      animation: floatCard 6s ease-in-out infinite;
+    }
+
+    .hero-card img {
+      height: 265px;
+      width: 100%;
+      object-fit: cover;
+      border-radius: 24px;
+    }
+
+    .hero-card-content {
+      display: grid;
+      gap: 10px;
+      padding: 18px 6px 4px;
+    }
+
+    .hero-card strong {
+      color: var(--gold);
+      font-size: 0.78rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .hero-card h3 {
+      font-size: 2.15rem;
+    }
+
+    .hero-card p {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    section {
+      position: relative;
+      padding: 96px 0;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 28px;
+      margin-bottom: 42px;
+    }
+
+    .section-head h2 {
+      max-width: 710px;
+      color: var(--espresso);
+      font-size: clamp(3rem, 6vw, 5.8rem);
+      letter-spacing: -0.055em;
+    }
+
+    .section-head p {
+      max-width: 430px;
+      color: rgba(42, 22, 13, 0.72);
+      line-height: 1.75;
+    }
+
+    .story-grid {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .story-image,
+    .story-copy,
+    .menu-card,
+    .booking-card,
+    .contact-card,
+    .stat {
+      border: 1px solid rgba(92, 50, 31, 0.12);
+      border-radius: var(--radius-lg);
+      background: rgba(255, 250, 241, 0.68);
+      box-shadow: var(--shadow);
+    }
+
+    .story-image {
+      min-height: 520px;
+      overflow: hidden;
+    }
+
+    .story-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 800ms ease;
+    }
+
+    .story-image:hover img {
+      transform: scale(1.06);
+    }
+
+    .story-copy {
+      padding: clamp(28px, 5vw, 58px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 32px;
+    }
+
+    .story-copy h3 {
+      color: var(--espresso);
+      font-size: clamp(2.4rem, 5vw, 4.3rem);
+      letter-spacing: -0.045em;
+    }
+
+    .story-copy p,
+    .menu-card p,
+    .contact-card p {
+      color: rgba(42, 22, 13, 0.72);
+      line-height: 1.75;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .stat {
+      padding: 22px;
+      background: rgba(255, 244, 228, 0.76);
+    }
+
+    .stat b {
+      display: block;
+      color: var(--cocoa);
+      font-family: "Cormorant Garamond", serif;
+      font-size: 2.8rem;
+      line-height: 1;
+    }
+
+    .stat span {
+      color: rgba(42, 22, 13, 0.64);
+      font-size: 0.88rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .menu-card {
+      overflow: hidden;
+      background: #fff8ec;
+      transition: transform 260ms ease, box-shadow 260ms ease;
+    }
+
+    .menu-card:hover {
+      transform: translateY(-10px) rotate(-0.8deg);
+      box-shadow: 0 30px 80px rgba(42, 22, 13, 0.28);
+    }
+
+    .menu-card img {
+      height: 260px;
+      width: 100%;
+      object-fit: cover;
+    }
+
+    .menu-body {
+      padding: 26px;
+    }
+
+    .menu-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: baseline;
+    }
+
+    .menu-card h3 {
+      color: var(--espresso);
+      font-size: 2.1rem;
+    }
+
+    .menu-cta {
+      display: flex;
+      justify-content: center;
+      margin-top: 28px;
+    }
+
+    .menu-photo-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin: 18px 0 6px;
+    }
+
+    .menu-shot {
+      position: relative;
+      min-height: 150px;
+      overflow: hidden;
+      border-radius: 22px;
+      border: 1px solid rgba(92, 50, 31, 0.1);
+      box-shadow: 0 16px 32px rgba(42, 22, 13, 0.14);
+    }
+
+    .menu-shot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 500ms ease;
+    }
+
+    .menu-shot:hover img {
+      transform: scale(1.05);
+    }
+
+    .menu-shot span {
+      position: absolute;
+      left: 12px;
+      bottom: 12px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      color: var(--cream);
+      background: rgba(23, 10, 3, 0.58);
+      font-size: 0.74rem;
+      font-weight: 800;
+      backdrop-filter: blur(8px);
+    }
+
+    .price {
+      color: var(--ember);
+      font-weight: 900;
+    }
+
+    .currency-note {
+      color: rgba(42, 22, 13, 0.64);
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 20px;
+    }
+
+    .tag {
+      padding: 8px 11px;
+      border-radius: 999px;
+      color: var(--cocoa);
+      background: rgba(229, 184, 103, 0.24);
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .experience {
+      color: var(--cream);
+      background:
+        linear-gradient(120deg, rgba(23, 10, 3, 0.92), rgba(23, 10, 3, 0.68)),
+        url("assets/images/sections/dining-room.jpg") center/cover fixed;
+    }
+
+    .experience .section-head h2,
+    .experience .section-head p {
+      color: var(--cream);
+    }
+
+    .experience-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .feature {
+      min-height: 235px;
+      padding: 26px;
+      border: 1px solid rgba(255, 244, 228, 0.16);
+      border-radius: var(--radius-md);
+      background: rgba(255, 244, 228, 0.09);
+      backdrop-filter: blur(16px);
+      transition: transform 240ms ease, background 240ms ease;
+    }
+
+    .feature:hover {
+      transform: translateY(-8px);
+      background: rgba(255, 244, 228, 0.16);
+    }
+
+    .feature .num {
+      color: var(--gold);
+      font-family: "Cormorant Garamond", serif;
+      font-size: 3rem;
+    }
+
+    .feature h3 {
+      margin-top: 30px;
+      font-size: 1.75rem;
+    }
+
+    .feature p {
+      color: rgba(255, 244, 228, 0.72);
+      line-height: 1.65;
+    }
+
+    .booking {
+      background:
+        radial-gradient(circle at 12% 18%, rgba(101, 119, 94, 0.22), transparent 28rem),
+        linear-gradient(180deg, rgba(255, 250, 241, 0.48), rgba(255, 244, 228, 0.88));
+    }
+
+    .booking-wrap {
+      display: grid;
+      grid-template-columns: 0.82fr 1.18fr;
+      gap: 26px;
+      align-items: start;
+    }
+
+    .booking-card {
+      padding: clamp(24px, 4vw, 42px);
+      background: rgba(255, 250, 241, 0.82);
+    }
+
+    .booking-card h2 {
+      color: var(--espresso);
+      font-size: clamp(2.8rem, 5vw, 4.8rem);
+      letter-spacing: -0.045em;
+    }
+
+    .booking-card p {
+      color: rgba(42, 22, 13, 0.7);
+      line-height: 1.75;
+    }
+
+    .booking-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .booking-list div {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 16px;
+      border-radius: 18px;
+      color: var(--cocoa);
+      background: rgba(229, 184, 103, 0.22);
+      font-weight: 800;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      color: rgba(42, 22, 13, 0.74);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      min-height: 54px;
+      padding: 0 16px;
+      border: 1px solid rgba(92, 50, 31, 0.18);
+      border-radius: 16px;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.74);
+      outline: 0;
+      transition: border 200ms ease, box-shadow 200ms ease, background 200ms ease;
+    }
+
+    textarea {
+      min-height: 118px;
+      padding-top: 15px;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--ember);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(200, 111, 61, 0.14);
+    }
+
+    .form-actions {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      margin-top: 6px;
+    }
+
+    .booking-message {
+      min-height: 28px;
+      color: var(--sage);
+      font-weight: 900;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .contact-card {
+      padding: 30px;
+      background: rgba(255, 250, 241, 0.76);
+    }
+
+    .contact-card h3 {
+      color: var(--espresso);
+      font-size: 2rem;
+    }
+
+    .trust-grid {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .map-card,
+    .review-card,
+    .menu-overlay .menu-book {
+      border: 1px solid rgba(92, 50, 31, 0.12);
+      border-radius: var(--radius-lg);
+      background: rgba(255, 250, 241, 0.82);
+      box-shadow: var(--shadow);
+    }
+
+    .map-card {
+      padding: 18px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .map-frame {
+      width: 100%;
+      min-height: 420px;
+      border: 0;
+      border-radius: 26px;
+      background: #f5eadb;
+    }
+
+    .trust-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .trust-pill {
+      padding: 10px 13px;
+      border-radius: 999px;
+      color: var(--cocoa);
+      background: rgba(229, 184, 103, 0.22);
+      font-size: 0.84rem;
+      font-weight: 800;
+    }
+
+    .review-card {
+      padding: clamp(24px, 4vw, 40px);
+    }
+
+    .review-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .review-item {
+      padding: 20px;
+      border-radius: 22px;
+      background: rgba(255, 244, 228, 0.72);
+      border: 1px solid rgba(92, 50, 31, 0.08);
+    }
+
+    .review-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .stars {
+      color: #d99b34;
+      letter-spacing: 0.12em;
+      font-weight: 900;
+    }
+
+    .review-item p {
+      margin: 0;
+      color: rgba(42, 22, 13, 0.72);
+      line-height: 1.72;
+    }
+
+    .reviewer {
+      margin-top: 14px;
+      color: var(--espresso);
+      font-weight: 900;
+    }
+
+    .review-score {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--espresso);
+      font-size: 1rem;
+      font-weight: 900;
+    }
+
+    .review-score strong {
+      font-family: "Cormorant Garamond", serif;
+      font-size: 2.3rem;
+      line-height: 1;
+      color: var(--ember);
+    }
+
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background: rgba(22, 11, 6, 0.46);
+      opacity: 0;
+      pointer-events: none;
+      backdrop-filter: blur(0);
+      transition: opacity 260ms ease, backdrop-filter 260ms ease;
+    }
+
+    .menu-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+      backdrop-filter: blur(14px);
+    }
+
+    .menu-book {
+      position: relative;
+      width: min(1120px, 100%);
+      max-height: min(90vh, 940px);
+      overflow: auto;
+      padding: 22px;
+      background:
+        radial-gradient(circle at 10% 12%, rgba(229, 184, 103, 0.22), transparent 24%),
+        linear-gradient(135deg, #fffaf1, #f6e6ce);
+      transform: scale(0.94) translateY(26px) rotateX(7deg);
+      opacity: 0;
+      transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1), opacity 260ms ease;
+    }
+
+    .menu-overlay.open .menu-book {
+      transform: scale(1) translateY(0) rotateX(0);
+      opacity: 1;
+    }
+
+    .menu-book::before {
+      content: "";
+      position: absolute;
+      inset: 18px auto 18px 50%;
+      width: 20px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(111, 62, 29, 0.2), rgba(42, 22, 13, 0.06));
+      box-shadow: 0 0 0 1px rgba(92, 50, 31, 0.05);
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .menu-book-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 4px 4px 18px;
+    }
+
+    .menu-book-header h2 {
+      color: var(--espresso);
+      font-size: clamp(2.8rem, 5vw, 4.8rem);
+      letter-spacing: -0.05em;
+    }
+
+    .menu-book-header p {
+      max-width: 520px;
+      margin: 12px 0 0;
+      color: rgba(42, 22, 13, 0.72);
+      line-height: 1.7;
+    }
+
+    .book-close {
+      min-width: 48px;
+      width: 48px;
+      height: 48px;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      color: var(--cream);
+      background: var(--espresso);
+      box-shadow: 0 10px 22px rgba(42, 22, 13, 0.24);
+    }
+
+    .menu-book-grid {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .menu-book-photo-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 6px 4px 18px;
+    }
+
+    .menu-book-photo {
+      min-height: 128px;
+      overflow: hidden;
+      border-radius: 20px;
+      border: 1px solid rgba(92, 50, 31, 0.08);
+      box-shadow: 0 12px 26px rgba(42, 22, 13, 0.1);
+    }
+
+    .menu-book-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .menu-page {
+      position: relative;
+      padding: 28px;
+      border-radius: 28px;
+      min-height: 640px;
+      background:
+        linear-gradient(180deg, rgba(255, 250, 241, 0.98), rgba(249, 236, 214, 0.96));
+      box-shadow:
+        inset 0 0 0 1px rgba(92, 50, 31, 0.07),
+        inset 0 -30px 60px rgba(200, 111, 61, 0.05);
+    }
+
+    .menu-page::after {
+      content: "";
+      position: absolute;
+      inset: 16px;
+      border-radius: 22px;
+      border: 1px solid rgba(92, 50, 31, 0.06);
+      pointer-events: none;
+    }
+
+    .page-kicker {
+      color: var(--ember);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .menu-section {
+      margin-top: 18px;
+    }
+
+    .menu-section h3 {
+      color: var(--espresso);
+      font-size: 2.1rem;
+      margin-bottom: 14px;
+    }
+
+    .menu-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(92, 50, 31, 0.1);
+    }
+
+    .menu-item:last-child {
+      border-bottom: 0;
+    }
+
+    .menu-item h4 {
+      margin: 0 0 6px;
+      color: var(--espresso);
+      font-size: 1.2rem;
+    }
+
+    .menu-item p {
+      margin: 0;
+      color: rgba(42, 22, 13, 0.68);
+      line-height: 1.65;
+      font-size: 0.94rem;
+    }
+
+    .menu-price {
+      color: var(--ember);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .menu-book-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 18px;
+      padding: 18px 4px 2px;
+      color: rgba(42, 22, 13, 0.72);
+      font-size: 0.92rem;
+    }
+
+    footer {
+      position: relative;
+      overflow: hidden;
+      padding: 82px 0 28px;
+      color: rgba(255, 244, 228, 0.78);
+      background:
+        radial-gradient(circle at 8% 12%, rgba(229, 184, 103, 0.2), transparent 24rem),
+        radial-gradient(circle at 92% 18%, rgba(200, 111, 61, 0.18), transparent 22rem),
+        linear-gradient(135deg, #1b0d07, var(--espresso));
+    }
+
+    footer::before {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      pointer-events: none;
+      border: 1px solid rgba(255, 244, 228, 0.08);
+      border-radius: 34px;
+    }
+
+    .footer-grid {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr 0.75fr 1fr;
+      gap: 34px;
+      padding-bottom: 42px;
+      border-bottom: 1px solid rgba(255, 244, 228, 0.12);
+    }
+
+    .footer-about p,
+    .footer-col p,
+    .footer-bottom {
+      line-height: 1.75;
+    }
+
+    .footer-about p {
+      max-width: 360px;
+      margin: 20px 0 24px;
+    }
+
+    .footer-col h3 {
+      margin: 0 0 18px;
+      color: var(--gold);
+      font-family: "Manrope", sans-serif;
+      font-size: 0.82rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .footer-links,
+    .footer-contact {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .footer-links a,
+    .footer-contact span {
+      color: rgba(255, 244, 228, 0.78);
+    }
+
+    .footer-links a:hover {
+      color: var(--gold);
+    }
+
+    .footer-newsletter {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+      padding: 8px;
+      border: 1px solid rgba(255, 244, 228, 0.14);
+      border-radius: 999px;
+      background: rgba(255, 244, 228, 0.08);
+    }
+
+    .footer-newsletter input {
+      min-height: 44px;
+      border: 0;
+      color: var(--cream);
+      background: transparent;
+    }
+
+    .footer-newsletter input::placeholder {
+      color: rgba(255, 244, 228, 0.52);
+    }
+
+    .footer-newsletter .btn {
+      min-height: 44px;
+      padding: 0 16px;
+      white-space: nowrap;
+    }
+
+    .socials {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .socials a {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255, 244, 228, 0.16);
+      border-radius: 50%;
+      color: var(--cream);
+      background: rgba(255, 244, 228, 0.08);
+      font-weight: 900;
+      transition: transform 220ms ease, background 220ms ease;
+    }
+
+    .socials a:hover {
+      transform: translateY(-4px);
+      background: rgba(229, 184, 103, 0.22);
+    }
+
+    .footer-bottom {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+      padding-top: 24px;
+      font-size: 0.92rem;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(34px);
+      transition: opacity 700ms ease, transform 700ms ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes dropIn {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -18px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(34px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes floatCard {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(1deg);
+      }
+
+      50% {
+        transform: translateY(-16px) rotate(-1deg);
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .nav>a.btn-primary[href="#booking"] {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 920px) {
+      .nav-links {
+        position: absolute;
+        top: calc(100% + 12px);
+        right: 0;
+        display: grid;
+        min-width: 230px;
+        gap: 4px;
+        padding: 12px;
+        border: 1px solid rgba(255, 250, 241, 0.24);
+        border-radius: 22px;
+        background: rgba(28, 15, 9, 0.94);
+        box-shadow: 0 24px 55px rgba(22, 9, 2, 0.26);
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-8px);
+        transition: opacity 220ms ease, transform 220ms ease;
+      }
+
+      .nav.nav-open .nav-links {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+      }
+
+      .nav-links a {
+        padding: 12px 14px;
+        border-radius: 14px;
+      }
+
+      .nav-links a:hover {
+        background: rgba(255, 244, 228, 0.1);
+      }
+
+      .nav-links a::after {
+        display: none;
+      }
+
+      .menu-toggle {
+        display: inline-flex;
+      }
+
+      .hero-grid,
+      .story-grid,
+      .booking-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .menu-grid,
+      .experience-grid,
+      .contact-grid,
+      .trust-grid,
+      .menu-book-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .section-head {
+        display: block;
+      }
+
+      .story-image {
+        min-height: 360px;
+      }
+
+      .menu-book::before {
+        display: none;
+      }
+
+      .menu-page {
+        min-height: auto;
+      }
+
+      .menu-photo-strip,
+      .menu-book-photo-strip {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .nav {
+        top: 10px;
+        gap: 8px;
+        padding: 10px 10px 10px 12px;
+        border-radius: 24px;
+      }
+
+      .brand span {
+        font-size: 0.82rem;
+      }
+
+      .brand-mark {
+        width: 34px;
+        height: 34px;
+      }
+
+      .nav .btn {
+        min-height: 38px;
+        padding: 0 12px;
+        font-size: 0.78rem;
+        white-space: nowrap;
+      }
+
+      .hero {
+        padding-top: 108px;
+      }
+
+      .hero-card img {
+        height: 210px;
+      }
+
+      section {
+        padding: 68px 0;
+      }
+
+      .menu-grid,
+      .experience-grid,
+      .contact-grid,
+      .trust-grid,
+      .menu-book-grid,
+      .stats,
+      form,
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .field.full,
+      .form-actions {
+        grid-column: auto;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      h1 {
+        font-size: clamp(3.7rem, 18vw, 6rem);
+      }
+
+      .menu-book-header {
+        display: grid;
+      }
+
+      .book-close {
+        justify-self: end;
+      }
+
+      .menu-photo-strip,
+      .menu-book-photo-strip {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .whatsapp-float {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 90;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 58px;
+      padding: 12px 18px 12px 14px;
+      border-radius: 999px;
+      color: #ffffff;
+      background: #25d366;
+      box-shadow: 0 18px 42px rgba(37, 211, 102, 0.34);
+      font-weight: 800;
+      transition: transform 220ms ease, box-shadow 220ms ease, background 220ms ease;
+    }
+
+    .whatsapp-float:hover {
+      transform: translateY(-4px);
+      background: #1ebe5d;
+      box-shadow: 0 24px 55px rgba(37, 211, 102, 0.42);
+    }
+
+    .whatsapp-float svg {
+      width: 28px;
+      height: 28px;
+      flex: 0 0 auto;
+      fill: currentColor;
+    }
+
+    @media (max-width: 640px) {
+      .whatsapp-float {
+        right: 16px;
+        bottom: 16px;
+        width: 56px;
+        height: 56px;
+        min-height: 56px;
+        justify-content: center;
+        padding: 0;
+      }
+
+      .whatsapp-float span {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="nav" aria-label="Main navigation">
+    <a class="brand" href="#top" aria-label="Aurora Table home">
+      <span class="brand-mark">AT</span>
+      <span>Aura Table</span>
+    </a>
+    <div class="nav-links">
+      <a href="#story">Story</a>
+      <a href="#menu">Menu</a>
+      <a href="#experience">Experience</a>
+      <a href="#trust">Trust</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <a class="btn btn-primary" href="#booking">Reserve Now</a>
+    <button class="menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false">
+      <span class="menu-toggle-lines" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </span>
+    </button>
+  </nav>
+
+  <header class="hero" id="top">
+    <div class="container hero-grid">
+      <div>
+        <p class="eyebrow">Modern fire-cooked dining</p>
+        <h1>Food that feels like a <span>celebration.</span></h1>
+        <p>Step into Aurora Table, where slow-roasted flavors, glowing interiors, and chef-led hospitality create the
+          kind of evening guests talk about long after dessert.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#booking">Book a Table</a>
+          <a class="btn btn-soft" href="#menu">Explore Menu</a>
+          <button class="btn btn-dark" id="openMenuBook" type="button">Open Menu Book</button>
+        </div>
+      </div>
+      <aside class="hero-card" aria-label="Featured dish">
+        <img src="assets/images/menu/butter-chicken.jpg" alt="Butter chicken with naan and fresh herbs" />
+        <div class="hero-card-content">
+          <strong>Tonight's Signature</strong>
+          <h3>Butter Chicken Feast</h3>
+          <p>Slow-cooked butter chicken, soft naan, and a rich North Indian finish.</p>
+        </div>
+      </aside>
+    </div>
+  </header>
+
+  <main>
+    <section id="story">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2>A dining room built for golden-hour memories.</h2>
+          <p>We designed every detail to feel warm, premium, and welcoming: cinematic lighting, handmade plates, fresh
+            produce, and service that feels personal without being stiff.</p>
+        </div>
+        <div class="story-grid">
+          <div class="story-image reveal">
+            <img src="assets/images/sections/dining-room.jpg" alt="Warm modern restaurant interior" />
+          </div>
+          <div class="story-copy reveal">
+            <div>
+              <p class="eyebrow">Our philosophy</p>
+              <h3>Seasonal ingredients, dramatic plates, relaxed luxury.</h3>
+              <p>Our kitchen celebrates regional produce with a modern grill, bright sauces, and bold plating. Come for
+                a birthday, client dinner, date night, or an unplanned Tuesday that deserves better food.</p>
+            </div>
+            <div class="stats">
+              <div class="stat"><b>12</b><span>Chef specials</span></div>
+              <div class="stat"><b>4.9</b><span>Guest rating</span></div>
+              <div class="stat"><b>7</b><span>Days open</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="menu">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2>Guest favorites from the fire, garden, and coast.</h2>
+          <p>A compact menu section with premium restaurant positioning. Each card is made to look appetizing, readable,
+            and conversion-friendly.</p>
+        </div>
+        <div class="menu-grid">
+          <article class="menu-card reveal">
+            <img src="assets/images/menu/butter-chicken.jpg" alt="Butter chicken served with naan bread" />
+            <div class="menu-body">
+              <div class="menu-top">
+                <h3>Butter Chicken</h3><span class="price">₹480</span>
+              </div>
+              <p>Slow-cooked chicken in a rich tomato cream gravy with butter naan.</p>
+              <div class="tags"><span class="tag">Chef Pick</span><span class="tag">North Indian</span></div>
+            </div>
+          </article>
+          <article class="menu-card reveal">
+            <img src="assets/images/menu/biriyani.jpg" alt="Hyderabadi biryani served in clay pots" />
+            <div class="menu-body">
+              <div class="menu-top">
+                <h3>Hyderabadi Biryani</h3><span class="price">₹420</span>
+              </div>
+              <p>Fragrant basmati rice with herbs, saffron, and raita on the side.</p>
+              <div class="tags"><span class="tag">Signature</span><span class="tag">Royal Rice</span></div>
+            </div>
+          </article>
+          <article class="menu-card reveal">
+            <img src="assets/images/menu/dosa.jpg" alt="Masala dosa with chutneys" />
+            <div class="menu-body">
+              <div class="menu-top">
+                <h3>Masala Dosa</h3><span class="price">₹260</span>
+              </div>
+              <p>Crisp dosa, spiced potato filling, coconut chutney, and sambar.</p>
+              <div class="tags"><span class="tag">South Indian</span><span class="tag">Breakfast</span></div>
+            </div>
+          </article>
+        </div>
+        <p class="currency-note reveal">All menu prices are shown in Indian rupees.</p>
+        <div class="menu-cta reveal">
+          <button class="btn btn-dark" id="openMenuBookSecondary" type="button">Open Full Menu Book</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="experience" id="experience">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2>The restaurant experience visitors expect from a real brand.</h2>
+          <p>Atmosphere, trust, booking, and delicious imagery all work together so the page feels like a professional
+            business website.</p>
+        </div>
+        <div class="experience-grid">
+          <div class="feature reveal"><span class="num">01</span>
+            <h3>Live Grill</h3>
+            <p>Open-flame dishes with smoky aroma and tableside finishing.</p>
+          </div>
+          <div class="feature reveal"><span class="num">02</span>
+            <h3>Private Dining</h3>
+            <p>Elegant spaces for parties, family dinners, and business hosting.</p>
+          </div>
+          <div class="feature reveal"><span class="num">03</span>
+            <h3>Chef Menu</h3>
+            <p>Seasonal specials built around market-fresh ingredients.</p>
+          </div>
+          <div class="feature reveal"><span class="num">04</span>
+            <h3>Smart Booking</h3>
+            <p>A smooth reservation form with instant confirmation on the page.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="booking" id="booking">
+      <div class="container booking-wrap">
+        <div class="booking-card reveal">
+          <p class="eyebrow">Reservations</p>
+          <h2>Book your table in seconds.</h2>
+          <p>Choose your date, time, party size, and occasion. This front-end booking system validates the form, creates
+            a confirmation number, and saves bookings in the browser.</p>
+          <div class="booking-list">
+            <div>Open daily: 12:00 PM - 11:30 PM</div>
+            <div>Instant reservation confirmation</div>
+            <div>Perfect for birthdays, dates, and private events</div>
+          </div>
+        </div>
+        <div class="booking-card reveal">
+          <form id="bookingForm" action="https://api.web3forms.com/submit" method="POST">
+            <input type="hidden" name="access_key" value="8cedcb5e-2953-4d61-a715-53939e49d45a">
+            <div class="field">
+              <label for="name">Full Name</label>
+              <input id="name" name="name" type="text" placeholder="Your name" required />
+            </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" placeholder="guest@example.com" required />
+            </div>
+            <div class="field">
+              <label for="phone">Phone</label>
+              <input id="phone" name="phone" type="tel" placeholder="+1 555 123 4567" required />
+            </div>
+            <div class="field">
+              <label for="date">Date</label>
+              <input id="date" name="date" type="date" required />
+            </div>
+            <div class="field">
+              <label for="time">Time</label>
+              <select id="time" name="time" required>
+                <option value="">Select time</option>
+                <option>12:00 PM</option>
+                <option>1:00 PM</option>
+                <option>2:00 PM</option>
+                <option>6:00 PM</option>
+                <option>7:00 PM</option>
+                <option>8:00 PM</option>
+                <option>9:00 PM</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="guests">Guests</label>
+              <select id="guests" name="guests" required>
+                <option value="">Party size</option>
+                <option>2 Guests</option>
+                <option>3 Guests</option>
+                <option>4 Guests</option>
+                <option>5 Guests</option>
+                <option>6 Guests</option>
+                <option>8+ Guests</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="occasion">Occasion</label>
+              <select id="occasion" name="occasion">
+                <option>Dinner</option>
+                <option>Birthday</option>
+                <option>Anniversary</option>
+                <option>Business Meal</option>
+                <option>Private Event</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label for="message">Special Request</label>
+              <textarea id="message" name="message" placeholder="Window table, allergies, celebration note..." required></textarea>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-dark" type="submit">Confirm Booking</button>
+              <span class="booking-message" id="bookingMessage" role="status"></span>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section id="trust">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2>Find us easily, then read the reviews that build confidence.</h2>
+          <p>A live Google map, local details, and guest comments give the site the credibility people expect before
+            they book.</p>
+        </div>
+        <div class="trust-grid">
+          <div class="map-card reveal">
+            <iframe class="map-frame"
+              src="https://www.google.com/maps?q=Nagpur%2C%20Maharashtra%2C%20India&output=embed" loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade" title="Aurora Table location on Google Maps"></iframe>
+            <div class="trust-meta">
+              <span class="trust-pill">Nagpur, Maharashtra, India</span>
+              <span class="trust-pill">Open daily from lunch to late night</span>
+              <span class="trust-pill">Easy valet and street parking nearby</span>
+            </div>
+          </div>
+          <div class="review-card reveal">
+            <div class="review-score"><strong>4.9</strong><span>Average guest rating from recent diners</span></div>
+            <div class="review-list">
+              <article class="review-item">
+                <div class="review-top">
+                  <span class="stars">★★★★★</span>
+                  <span>Google Review</span>
+                </div>
+                <p>“Beautiful room, polished service, and the coastal plate was genuinely memorable. It felt like a
+                  restaurant you immediately want to recommend.”</p>
+                <div class="reviewer">Maya R. - Anniversary dinner</div>
+              </article>
+              <article class="review-item">
+                <div class="review-top">
+                  <span class="stars">★★★★★</span>
+                  <span>Guest Review</span>
+                </div>
+                <p>“The menu is clear, the booking flow is simple, and the atmosphere is warm without feeling forced.
+                  Exactly what you want for a date night.”</p>
+                <div class="reviewer">Daniel K. - Date night</div>
+              </article>
+              <article class="review-item">
+                <div class="review-top">
+                  <span class="stars">★★★★★</span>
+                  <span>Local Guest</span>
+                </div>
+                <p>“The location was easy to find on the map and the food photos matched the real experience. That
+                  combination builds trust fast.”</p>
+                <div class="reviewer">Nina S. - First visit</div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2>Visit us for your next beautiful meal.</h2>
+          <p>Use this section for real restaurant details when you launch: address, hours, phone, and social links.</p>
+        </div>
+        <div class="contact-grid">
+          <div class="contact-card reveal">
+            <h3>Location</h3>
+            <p>Nagpur, Maharashtra<br>India</p>
+          </div>
+          <div class="contact-card reveal">
+            <h3>Hours</h3>
+            <p>Mon - Fri: 12 PM - 11 PM<br>Sat - Sun: 11 AM - 11:30 PM</p>
+          </div>
+          <div class="contact-card reveal">
+            <h3>Contact</h3>
+            <p>hello@auroratable.com<br>+1 (555) 019-8842</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="menu-overlay" id="menuOverlay" aria-hidden="true">
+    <div class="menu-book" role="dialog" aria-modal="true" aria-labelledby="menuBookTitle">
+      <div class="menu-book-header">
+        <div>
+          <div class="page-kicker">Full Menu Book</div>
+          <h2 id="menuBookTitle">Aurora Table Indian menu.</h2>
+          <p>A cinematic book-style menu with 20+ Indian dishes priced in rupees and arranged like a premium dining
+            house presentation.</p>
+        </div>
+        <button class="book-close" id="closeMenuBook" type="button" aria-label="Close menu book">×</button>
+      </div>
+      <div class="menu-book-photo-strip">
+        <div class="menu-book-photo"><img src="assets/images/menu/biryani.jpg" alt="Biryani in clay pots" /></div>
+        <div class="menu-book-photo"><img src="assets/images/menu/masala-dosa.jpg" alt="Masala dosa with chutneys" />
+        </div>
+        <div class="menu-book-photo"><img src="assets/images/menu/butter-chicken.jpg" alt="Butter chicken with naan" />
+        </div>
+        <div class="menu-book-photo"><img src="assets/images/menu/chicken-tikka-masala.jpg"
+            alt="Chicken tikka masala with naan" /></div>
+      </div>
+      <div class="menu-book-grid">
+        <section class="menu-page">
+          <div class="page-kicker">Starters and Grills</div>
+          <div class="menu-section">
+            <h3>Starters</h3>
+            <div class="menu-item">
+              <div>
+                <h4>Paneer Tikka</h4>
+                <p>Chargrilled paneer, mint chutney, and onion salad.</p>
+              </div>
+              <div class="menu-price">₹320</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <h4>Chicken Tikka</h4>
+                <p>Smoky chicken skewers with house spice rub and lemon.</p>
+              </div>
+              <div class="menu-price">₹360</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <h4>Vegetable Samosa</h4>
+                <p>Crisp pastry, spiced potato filling, and tamarind dip.</p>
+              </div>
+              <div class="menu-price">₹140</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <h4>Hara Bhara Kebab</h4>
+                <p>Spinach, peas, and herbs with a crisp golden crust.</p>
+              </div>
+              <div class="menu-price">₹180</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <h4>Amritsari Fish Fry</h4>
+                <p>Spiced fish fillets served with onion rings and lime.</p>
+              </div>
+              <div class="menu-price">₹390</div>
+            </div>
+          </div>
+          <div class="menu-section">
+            <h3>Grill and Tandoor</h3>
+            <div class="menu-item">
+              <div>
+                <h4>Chicken Malai Tikka</h4>
+                <p>Creamy yogurt marinade, mint chutney, and roasted spices.</p>
+              </div>
+              <div class="menu-price">₹370</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <h4>Tandoori Chicken</h4>
+                <p>Clay-oven roasted chicken with smoky seasoning and salad.</p>
+              </div>
+              <div class="menu-price">₹410</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <h4>Seekh Kebab</h4>
+                <p>Juicy spiced lamb skewers with mint and onion.</p>
+              </div>
+              <div class="menu-price">₹340</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <h4>Stuffed Mushroom Tikka</h4>
+                <p>Marinated mushrooms filled with paneer and herbs.</p>
+              </div>
+              <div class="menu-price">₹280</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <h4>Ghee Roast Prawns</h4>
+                <p>Kerala-style prawns finished with aromatic ghee roast masala.</p>
+              </div>
+              <div class="menu-price">₹460</div>
+            </div>
+          </div>
+        </section>
+        <section class="menu-page">
+          <div class="page-kicker">Curries, Biryani, and Sides</div>
+          <div class="menu-section">
+            <h3>Main Course</h3>
+            <div class="menu-item">
+              <div>
+                <h4>Butter Chicken</h4>
+                <p>Rich tomato gravy with cream, butter, and soft naan.</p>
+              </div>
+              <div class="menu-price">₹480</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <h4>Paneer Butter Masala</h4>
+                <p>Soft paneer cubes in a smooth and mildly spiced curry.</p>
+              </div>
+              <div class="menu-price">₹340</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <h4>Dal Makhani</h4>
+                <p>Slow-cooked black lentils with cream and smoked butter.</p>
+              </div>
+              <div class="menu-price">₹260</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <h4>Rajma Chawal</h4>
+                <p>Kidney bean curry served over steamed basmati rice.</p>
+              </div>
+              <div class="menu-price">₹220</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <h4>Veg Biryani</h4>
+                <p>Fragrant rice with seasonal vegetables and saffron aroma.</p>
+              </div>
+              <div class="menu-price">₹290</div>
+            </div>
+          </div>
+          <div class="menu-section">
+            <h3>Rice, Breads, and Desserts</h3>
+            <div class="menu-item">
+              <div>
+                <h4>Chicken Biryani</h4>
+                <p>Layered rice, marinated chicken, fried onions, and raita.</p>
+              </div>
+              <div class="menu-price">₹390</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <h4>Garlic Naan</h4>
+                <p>Soft oven-baked bread brushed with garlic butter.</p>
+              </div>
+              <div class="menu-price">₹90</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <h4>Rasgulla</h4>
+                <p>Light syrup-soaked Bengali sweet with a soft finish.</p>
+              </div>
+              <div class="menu-price">₹120</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <h4>Gulab Jamun</h4>
+                <p>Warm milk-solid dumplings in fragrant sugar syrup.</p>
+              </div>
+              <div class="menu-price">₹130</div>
+            </div>
+            <div class="menu-item">
+              <div>
+                <h4>Kulfi Falooda</h4>
+                <p>Traditional pistachio kulfi served with rose falooda.</p>
+              </div>
+              <div class="menu-price">₹160</div>
+            </div>
+          </div>
+          <div class="menu-book-footer">
+            <span>All prices are shown in Indian rupees.</span>
+            <span>Ask your server about today's chef specials and thali options.</span>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-about">
+          <div class="brand"><span class="brand-mark">AT</span><span>Aurora Table</span></div>
+          <p>Modern fire-cooked dining, warm hospitality, and polished private events for guests who love memorable
+            nights out.</p>
+          <div class="socials" aria-label="Social links">
+            <a href="#" aria-label="Instagram">Ig</a>
+            <a href="#" aria-label="Facebook">Fb</a>
+            <a href="#" aria-label="YouTube">Yt</a>
+            <a href="#" aria-label="X">X</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3>Explore</h3>
+          <ul class="footer-links">
+            <li><a href="#story">Our Story</a></li>
+            <li><a href="#menu">Signature Menu</a></li>
+            <li><a href="#experience">Dining Experience</a></li>
+            <li><a href="#booking">Reserve a Table</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Open Hours</h3>
+          <ul class="footer-contact">
+            <li><span>Mon - Fri: 12 PM - 11 PM</span></li>
+            <li><span>Saturday: 11 AM - 11:30 PM</span></li>
+            <li><span>Sunday: 11 AM - 10:30 PM</span></li>
+            <li><span>Private events by request</span></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Stay Connected</h3>
+          <p>Get chef specials, event nights, and priority table releases.</p>
+          <form class="footer-newsletter" id="newsletterForm">
+            <input name="email" type="email" placeholder="Email address" aria-label="Email address" required />
+            <button class="btn btn-primary" type="submit">Join</button>
+          </form>
+          <p class="booking-message" id="newsletterMessage" role="status"></p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>Nagpur, Maharashtra, India | hello@auroratable.com | +1 (555) 019-8842</span>
+      </div>
+    </div>
+  </footer>
+
+  <a class="whatsapp-float"
+    href="https://wa.me/917387218956?text=Hello%20Aura%20Table%2C%20I%20would%20like%20to%20make%20a%20reservation."
+    target="_blank" rel="noopener" aria-label="Chat with Aura Table on WhatsApp">
+    <svg viewBox="0 0 32 32" aria-hidden="true">
+      <path
+        d="M16.04 3.2c-7.04 0-12.76 5.68-12.76 12.68 0 2.24.6 4.42 1.72 6.34L3.16 28.8l6.74-1.76a12.86 12.86 0 0 0 6.14 1.56c7.04 0 12.76-5.68 12.76-12.72S23.08 3.2 16.04 3.2Zm0 23.24c-1.9 0-3.76-.5-5.38-1.46l-.38-.22-4 1.04 1.06-3.88-.26-.4a10.45 10.45 0 0 1-1.64-5.64c0-5.8 4.76-10.52 10.6-10.52s10.6 4.72 10.6 10.52-4.76 10.56-10.6 10.56Zm5.8-7.9c-.32-.16-1.9-.94-2.2-1.04-.3-.12-.52-.16-.74.16-.22.32-.84 1.04-1.04 1.26-.18.22-.38.24-.7.08-.32-.16-1.36-.5-2.58-1.58a9.7 9.7 0 0 1-1.78-2.22c-.18-.32-.02-.5.14-.66.14-.14.32-.38.48-.56.16-.2.22-.32.32-.54.1-.22.06-.4-.02-.56-.08-.16-.74-1.78-1.02-2.44-.28-.64-.54-.56-.74-.56h-.64c-.22 0-.56.08-.86.4-.3.32-1.14 1.12-1.14 2.72s1.16 3.14 1.32 3.36c.16.22 2.28 3.48 5.52 4.88.78.34 1.38.54 1.84.68.78.24 1.48.2 2.04.12.62-.1 1.9-.78 2.16-1.52.28-.74.28-1.38.2-1.52-.08-.14-.3-.22-.62-.38Z" />
+    </svg>
+    <span>WhatsApp</span>
+  </a>
+
+  <form action="https://api.web3forms.com/submit" method="POST">
+
+    <input type="hidden" name="access_key" value="8cedcb5e-2953-4d61-a715-53939e49d45a">
+
+    <input type="hidden" name="redirect" value="https://aura-table.onrender.com">
+
+    <input type="text" name="Name" placeholder="Full Name" required>
+    <input type="email" name="Email" placeholder="Email Address" required>
+    <input type="tel" name="Phone" placeholder="Phone Number" required>
+    <input type="date" name="Date" required>
+    <input type="time" name="Time" required>
+    <input type="number" name="Guests" placeholder="Number of Guests" required>
+
+    <button type="submit">Book Table</button>
+  </form>
+
+  <script src="config.js"></script>
+  <script>
+    const nav = document.querySelector('.nav');
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navLinks = document.querySelectorAll('.nav-links a');
+
+    menuToggle.addEventListener('click', () => {
+      const isOpen = nav.classList.toggle('nav-open');
+      menuToggle.setAttribute('aria-expanded', String(isOpen));
+      menuToggle.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
+    });
+
+    navLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        nav.classList.remove('nav-open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        menuToggle.setAttribute('aria-label', 'Open navigation menu');
+      });
+    });
+
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        nav.classList.remove('nav-open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        menuToggle.setAttribute('aria-label', 'Open navigation menu');
+      }
+    });
+
+    const revealItems = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.14 });
+
+    revealItems.forEach((item, index) => {
+      item.style.transitionDelay = `${Math.min(index * 55, 260)}ms`;
+      observer.observe(item);
+    });
+
+    const form = document.getElementById('bookingForm');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const message = document.getElementById('bookingMessage');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = "Sending...";
+      submitBtn.disabled = true;
+      message.textContent = '';
+      try {
+        const response = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          body: formData
+        });
+        const data = await response.json();
+        if (response.ok && data.success) {
+          message.textContent = "Success! Your booking has been sent.";
+          form.reset();
+        } else {
+          message.textContent = "Error: " + (data.message || 'Submission failed.');
+        }
+      } catch (error) {
+        message.textContent = "Something went wrong. Please try again.";
+      } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+
+</html>

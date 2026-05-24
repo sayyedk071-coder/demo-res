@@ -19,8 +19,8 @@ NODE_ENV=production
 PORT=3000
 WEB_CONCURRENCY=4
 DATABASE_URL=postgres://user:password@host:5432/aura_table
-ADMIN_USER=admin
-ADMIN_PASSWORD=use-a-long-random-password
+ADMIN_USER=auratabel
+ADMIN_PASSWORD=auratabel4000
 SMTP_HOST=smtp.example.com
 SMTP_PORT=587
 SMTP_USER=restaurant@example.com
@@ -30,14 +30,14 @@ NOTIFY_TO=owner@example.com
 FRONTEND_ORIGINS=https://your-vercel-site.vercel.app
 ```
 
-For local testing, keep `NODE_ENV=development`. The default admin login is:
+For local testing, keep `NODE_ENV=development`. The admin login is:
 
 ```text
-Username: admin
-Password: change-this-password
+Username: auratabel
+Password: auratabel4000
 ```
 
-For production, never use the default password. Set a strong `ADMIN_PASSWORD`, otherwise login is blocked for safety.
+Use a stronger password for production if you want extra protection.
 
 ## Database
 

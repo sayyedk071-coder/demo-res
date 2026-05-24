@@ -4,7 +4,7 @@
   "description": "Production-ready backend and frontend for Aura Table restaurant.",
   "main": "server.js",
   "scripts": {
-    "start": "node backend/server.js",
+    "start": "node server.js",
     "dev": "node server.js",
     "check": "node --check server.js"
   },
